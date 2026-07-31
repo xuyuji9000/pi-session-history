@@ -20,8 +20,8 @@ def main():
     # Sort files by modification time descending
     files.sort(key=os.path.getmtime, reverse=True)
 
-    print(f"{'Date':<20} | {'Session ID':<36} | {'Workspace':<35} | {'Description'}")
-    print("-" * 150)
+    print(f"{'Date':<27} | {'Session ID':<36} | {'Workspace':<35} | {'Description'}")
+    print("-" * 155)
 
     for f in files[:num_sessions]:
         workspace = "Unknown"
@@ -42,9 +42,9 @@ def main():
                                     dt = dt.replace(tzinfo=timezone.utc)
                                     shanghai_tz = timezone(timedelta(hours=8))
                                     dt_shanghai = dt.astimezone(shanghai_tz)
-                                    timestamp = dt_shanghai.strftime("%Y-%m-%d %H:%M:%S")
+                                    timestamp = dt_shanghai.strftime("%Y-%m-%d %H:%M:%S (GMT+8)")
                                 except Exception:
-                                    timestamp = ts_str[:19].replace("T", " ")
+                                    timestamp = ts_str[:19].replace("T", " ") + " (UTC)"
                             workspace = data.get("cwd", workspace)
                             session_id = data.get("id", session_id)
                             home_dir = os.path.expanduser("~")
@@ -64,7 +64,7 @@ def main():
         except Exception:
             pass
             
-        print(f"{timestamp:<20} | {session_id:<36} | {workspace[:33]:<35} | {desc}")
+        print(f"{timestamp:<27} | {session_id:<36} | {workspace[:33]:<35} | {desc}")
 
 if __name__ == "__main__":
     main()
