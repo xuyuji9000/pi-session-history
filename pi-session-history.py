@@ -3,6 +3,7 @@ import json
 import glob
 import os
 import sys
+from datetime import datetime, timezone, timedelta
 
 def main():
     num_sessions = 10
@@ -34,7 +35,16 @@ def main():
                     try:
                         data = json.loads(line)
                         if data.get("type") == "session":
-                            timestamp = data.get("timestamp", timestamp)[:19].replace("T", " ")
+                            ts_str = data.get("timestamp")
+                            if ts_str:
+                                try:
+                                    dt = datetime.strptime(ts_str[:19], "%Y-%m-%dT%H:%M:%S")
+                                    dt = dt.replace(tzinfo=timezone.utc)
+                                    shanghai_tz = timezone(timedelta(hours=8))
+                                    dt_shanghai = dt.astimezone(shanghai_tz)
+                                    timestamp = dt_shanghai.strftime("%Y-%m-%d %H:%M:%S")
+                                except Exception:
+                                    timestamp = ts_str[:19].replace("T", " ")
                             workspace = data.get("cwd", workspace)
                             session_id = data.get("id", session_id)
                             home_dir = os.path.expanduser("~")
